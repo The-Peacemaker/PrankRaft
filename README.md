@@ -1,40 +1,44 @@
-# PrankRaft
+# RIDE THE REDLINE
 
-PrankRaft is a cinematic, front-end prank arcade experience built for the IEEE Computer Society Prankraft competition.
-It combines high-impact visual storytelling, interactive misdirection, and playful reveal mechanics while staying safe and user-friendly.
+RIDE THE REDLINE is a cinematic front-end web experience that blends arcade-style game discovery with a dramatic, safe prank flow.
+It combines full-screen visual storytelling, high-energy interactions, and a clear reveal sequence for a polished and memorable user experience.
+
+## Live Link
+
+https://ride-the-redline.netlify.app/
 
 ## Project Overview
 
-PrankRaft is designed as an immersive scrolling web experience:
+RIDE THE REDLINE is designed as an immersive browser journey:
 
-- A full-screen hero video introduces the vibe with bold title-first storytelling.
-- A second full-screen scroll-reveal video advances with page scroll, creating a trailer-like progression.
-- Game cards appear on both sides of the reveal sequence, encouraging user interaction.
-- A prank flow simulates urgency (download prompt, fake threat effects, moving controls) and resolves with a clear April Fool reveal.
+- A full-screen hero video and bold centered title create a high-impact first impression.
+- A premium game showcase highlights every game with strong visual hierarchy and interactive calls to action.
+- Clicking Play launches a rapid pre-chaos popup burst with "YOU ARE COOKED!!!" overlays.
+- The flow transitions into controlled fake-system chaos with moving controls, popup alerts, and visual distortion.
+- The experience ends with a clean April Fool reveal so the prank stays harmless and user-friendly.
 
-The experience is intentionally dramatic but harmless, aligned with the competition focus on creativity, surprise, UI quality, and front-end execution.
+## Creative Features
 
-## Core Features
-
-- Full-screen looped hero video background
-- Scroll-synced cinematic reveal video
-- Side-rail game reveal cards with strong CTA flow
-- Stylized loading sequence with live progress stats
-- Interactive prank chain:
-  - fake patch download
-  - simulated threat overlays
+- Cinematic full-screen hero with layered overlays and motion
+- Premium game lineup section with highlighted cards and featured styling
+- Randomized popup burst sequence before prank execution
+- Interactive fake chaos layer:
+  - threat popups from random positions
+  - lagging cursor simulation
   - moving override button challenge
-  - final reveal screen
-- Generated prank report PDF for cross-medium reveal effect
-- Responsive layout for desktop and mobile
-- Modern animation stack with Framer Motion
+  - live panic log stream
+- Auto-generated prank PDF download named:
+  - `You are cooked.exe.pdf`
+- Multi-page PDF reveal content with custom messaging and embedded image
+- Strong responsive behavior across laptop, tablet, and mobile displays
 
 ## Tech Stack
 
 - React + TypeScript
 - Vite
 - Framer Motion
-- Tailwind CSS + custom CSS system
+- pdf-lib
+- Tailwind base setup + custom CSS system
 
 ## Local Development
 
@@ -71,23 +75,19 @@ npm run preview
 
 ```text
 src/
-  App.tsx                # Main flow and screen composition
-  styles.css             # Global styles and cinematic UI system
-  lib/arcadeFlow.ts      # Game metadata and prank PDF generator
-  components/            # UI components from earlier flow iterations
-  videos/                # Hero and scroll video assets
-  assets/games/          # Game poster art
+  App.tsx                # Main flow, hero, game showcase, and prank phases
+  styles.css             # Visual system, animations, responsive behavior
+  lib/arcadeFlow.ts      # Game metadata and dynamic PDF generation/download
+  components/            # Supporting UI components
+  assets/games/          # Game poster assets
+  images/                # Bike and reveal imagery
+  videos/                # Hero video assets
+public/
+  favicon.svg            # Custom RIDE THE REDLINE favicon
 ```
 
-## Competition Fit
+## Notes
 
-This project is tailored to the Prankraft rules:
-
-- Front-end only implementation
-- Responsive and interactive
-- Creative deceptive element that is non-harmful
-- Meaningful customization and original execution
-
-## Author
-
-Built for the Prankraft challenge by the PRANKRAFT team.
+- This project is intentionally dramatic but harmless.
+- All deceptive elements are visual simulations only.
+- The experience provides a clear reveal to keep the interaction fun and safe.
