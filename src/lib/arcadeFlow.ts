@@ -1,3 +1,6 @@
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import aprilFoolsMeme2 from '../images/April-Fools-Memes-2.jpg';
+
 export type Phase = 'loading' | 'boosting' | 'home' | 'download' | 'threat' | 'reveal';
 
 export type GameCardData = {
@@ -82,105 +85,135 @@ export const formatSeconds = (value: number) => `${value.toFixed(1)}s`;
 
 export const formatMbps = (value: number) => `${Math.round(value).toLocaleString()} Mbps`;
 
-const escapePdfText = (value: string) => value.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
-
-export function createAprilFoolsPdf(gameTitle: string) {
-  const now = new Date();
-  const sessionCode = Math.random().toString(36).slice(2, 8).toUpperCase();
-  const uptime = `${Math.floor(Math.random() * 18) + 7}.${Math.floor(Math.random() * 10)}s`;
-
-  const lines = [
-    'BOOST.EXE - Interactive Patch Report',
-    `Target game: ${gameTitle}`,
-    `Session code: ${sessionCode}`,
-    `Generated: ${now.toLocaleString()}`,
-    `Perceived wait: ${uptime}`,
-    '--- User Prompt Checklist ---',
-    '1) Slow internet warning accepted.',
-    '2) Network booster button clicked.',
-    '3) Patch download trusted.',
-    '4) Threat message emotionally processed.',
-    '--- Reveal ---',
-    'There was no virus and no booster.',
-    'This was an interactive April Fool design experiment.',
-    'Question: If this felt real, what made it believable?',
-    'Write your answer in this PDF and send it to your future self.',
-  ].map(escapePdfText);
-
-  const contentLines = [
-    'BT',
-    '/F1 21 Tf',
-    '72 720 Td',
-    `(${lines[0]}) Tj`,
-    '0 -30 Td',
-    '/F1 14 Tf',
-    `(${lines[1]}) Tj`,
-    '0 -22 Td',
-    `(${lines[2]}) Tj`,
-    '0 -22 Td',
-    `(${lines[3]}) Tj`,
-    '0 -22 Td',
-    `(${lines[4]}) Tj`,
-    '0 -28 Td',
-    '/F1 14 Tf',
-    `(${lines[5]}) Tj`,
-    '0 -20 Td',
-    `(${lines[6]}) Tj`,
-    '0 -18 Td',
-    `(${lines[7]}) Tj`,
-    '0 -18 Td',
-    `(${lines[8]}) Tj`,
-    '0 -18 Td',
-    `(${lines[9]}) Tj`,
-    '0 -30 Td',
-    `(${lines[10]}) Tj`,
-    '0 -20 Td',
-    `(${lines[11]}) Tj`,
-    '0 -20 Td',
-    `(${lines[12]}) Tj`,
-    '0 -20 Td',
-    `(${lines[13]}) Tj`,
-    '0 -20 Td',
-    `(${lines[14]}) Tj`,
-    'ET',
-  ].join('\n');
-
-  const objects = [
-    '<< /Type /Catalog /Pages 2 0 R >>',
-    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
-    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>',
-    `<< /Length ${contentLines.length} >>\nstream\n${contentLines}\nendstream`,
-    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
-  ];
-
-  const chunks: string[] = ['%PDF-1.4\n'];
-  const offsets = [0];
-
-  objects.forEach((objectBody, index) => {
-    offsets.push(chunks.join('').length);
-    chunks.push(`${index + 1} 0 obj\n${objectBody}\nendobj\n`);
-  });
-
-  const xrefStart = chunks.join('').length;
-  const xrefEntries = ['0000000000 65535 f '];
-
-  for (let index = 1; index <= objects.length; index += 1) {
-    xrefEntries.push(`${String(offsets[index]).padStart(10, '0')} 00000 n `);
-  }
-
-  chunks.push(`xref\n0 ${objects.length + 1}\n${xrefEntries.join('\n')}\n`);
-  chunks.push(`trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`);
-
-  return new Blob([chunks.join('')], { type: 'application/pdf' });
+function drawCenteredText(
+  page: import('pdf-lib').PDFPage,
+  text: string,
+  size: number,
+  y: number,
+  font: import('pdf-lib').PDFFont,
+  color: ReturnType<typeof rgb>,
+) {
+  const textWidth = font.widthOfTextAtSize(text, size);
+  const x = Math.max(24, (page.getWidth() - textWidth) / 2);
+  page.drawText(text, { x, y, size, font, color });
 }
 
-export function triggerPdfDownload(fileName: string, gameTitle: string) {
-  const blob = createAprilFoolsPdf(gameTitle);
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = fileName;
-  anchor.rel = 'noreferrer';
-  anchor.click();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+function drawWrappedText(
+  page: import('pdf-lib').PDFPage,
+  text: string,
+  maxWidth: number,
+  startX: number,
+  startY: number,
+  size: number,
+  lineHeight: number,
+  font: import('pdf-lib').PDFFont,
+  color: ReturnType<typeof rgb>,
+) {
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let current = '';
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (font.widthOfTextAtSize(candidate, size) <= maxWidth) {
+      current = candidate;
+    } else {
+      if (current) {
+        lines.push(current);
+      }
+      current = word;
+    }
+  }
+
+  if (current) {
+    lines.push(current);
+  }
+
+  lines.forEach((line, index) => {
+    page.drawText(line, {
+      x: startX,
+      y: startY - index * lineHeight,
+      size,
+      font,
+      color,
+    });
+  });
+}
+
+export async function createAprilFoolsPdf(gameTitle: string) {
+  const pdfDoc = await PDFDocument.create();
+  const pageSize = { width: 612, height: 792 };
+  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+  const page1 = pdfDoc.addPage([pageSize.width, pageSize.height]);
+  page1.drawRectangle({ x: 0, y: 0, width: pageSize.width, height: pageSize.height, color: rgb(0.05, 0.05, 0.06) });
+  drawCenteredText(page1, 'YOU ARE HACKED', 68, 430, fontBold, rgb(1, 0.2, 0.2));
+  drawCenteredText(page1, 'Do not close your browser...', 20, 380, fontRegular, rgb(0.9, 0.9, 0.95));
+
+  const page2 = pdfDoc.addPage([pageSize.width, pageSize.height]);
+  page2.drawRectangle({ x: 0, y: 0, width: pageSize.width, height: pageSize.height, color: rgb(0.07, 0.08, 0.11) });
+  drawCenteredText(page2, 'JUST KIDDING,', 52, 460, fontBold, rgb(0.45, 0.92, 1));
+  drawCenteredText(page2, "I DON'T KNOW HACKING", 40, 408, fontBold, rgb(0.45, 0.92, 1));
+  drawCenteredText(page2, `Target selected: ${gameTitle}`, 18, 362, fontRegular, rgb(0.95, 0.95, 0.98));
+
+  const memeBytes = await fetch(aprilFoolsMeme2).then((response) => response.arrayBuffer());
+  const memeImage = await pdfDoc.embedJpg(memeBytes);
+
+  const page3 = pdfDoc.addPage([pageSize.width, pageSize.height]);
+  page3.drawRectangle({ x: 0, y: 0, width: pageSize.width, height: pageSize.height, color: rgb(0.05, 0.05, 0.07) });
+
+  const maxImageWidth = 520;
+  const maxImageHeight = 470;
+  const imageScale = Math.min(maxImageWidth / memeImage.width, maxImageHeight / memeImage.height);
+  const drawWidth = memeImage.width * imageScale;
+  const drawHeight = memeImage.height * imageScale;
+  const imageX = (pageSize.width - drawWidth) / 2;
+  const imageY = 250;
+
+  page3.drawImage(memeImage, {
+    x: imageX,
+    y: imageY,
+    width: drawWidth,
+    height: drawHeight,
+  });
+
+  page3.drawText('HAPPY APRIL FOOL!', {
+    x: 56,
+    y: 165,
+    size: 42,
+    font: fontBold,
+    color: rgb(1, 0.45, 0.27),
+  });
+  drawWrappedText(
+    page3,
+    'You survived the prank. Now launch a game and prank your friends.',
+    500,
+    56,
+    126,
+    15,
+    22,
+    fontRegular,
+    rgb(0.88, 0.9, 0.97),
+  );
+
+  const bytes = await pdfDoc.save();
+  return new Blob([bytes], { type: 'application/pdf' });
+}
+
+export async function triggerPdfDownload(_fileName: string, gameTitle: string) {
+  try {
+    const blob = await createAprilFoolsPdf(gameTitle);
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'You are cooked.exe.pdf';
+    anchor.rel = 'noreferrer';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+  } catch (error) {
+    console.error('PDF download failed:', error);
+  }
 }

@@ -8,7 +8,7 @@ import neonDriftPoster from './assets/games/neon-drift.svg';
 import starCircuitPoster from './assets/games/star-circuit.svg';
 import turboPulsePoster from './assets/games/turbo-pulse.svg';
 import heroCarVideo from './videos/hero-car.mp4';
-import scrollCarVideo from './videos/car-scroll.mp4';
+import stitchHeroBike from './images/stitch-hero-bike.png';
 
 type AppPhase = 'loading' | 'hub' | 'chaos' | 'reveal';
 
@@ -18,6 +18,14 @@ type ThreatPopup = {
   top: number;
   title: string;
   detail: string;
+};
+
+type CookedPopup = {
+  id: number;
+  left: number;
+  top: number;
+  rotate: number;
+  scale: number;
 };
 
 const loadingStages = ['Warming up arcade network...', 'Syncing controllers...', 'Loading global arena...'];
@@ -40,30 +48,9 @@ const gameUrgency: Record<string, string> = {
   'Final Boss FM': 'LEGENDARY MODE UNLOCKED',
 };
 
-const prankExperiences = [
-  {
-    title: 'BOOST.EXE Download Prank',
-    detail: 'A fake network optimization chain that triggers a believable patch download before reveal.',
-  },
-  {
-    title: 'Threat Overlay Simulation',
-    detail: 'Harmless intrusion popups, fake logs, and lag visuals create controlled panic without real risk.',
-  },
-  {
-    title: 'Moving Override Challenge',
-    detail: 'The panic button dodges the cursor to turn user urgency into playful interaction.',
-  },
-  {
-    title: 'Cross-Medium Punchline',
-    detail: 'The downloaded PDF repeats the reveal so the prank lands inside and outside the website.',
-  },
-];
-
 function App() {
   const homeRef = useRef<HTMLElement | null>(null);
-  const revealRef = useRef<HTMLElement | null>(null);
   const heroVideoRef = useRef<HTMLVideoElement | null>(null);
-  const scrollVideoRef = useRef<HTMLVideoElement | null>(null);
   const [phase, setPhase] = useState<AppPhase>('loading');
   const [progress, setProgress] = useState(0);
   const [loadingText, setLoadingText] = useState(loadingStages[0]);
@@ -73,6 +60,8 @@ function App() {
   const [buttonPos, setButtonPos] = useState({ x: 0, y: 0 });
   const [lagPulse, setLagPulse] = useState(0);
   const [threatPopups, setThreatPopups] = useState<ThreatPopup[]>([]);
+  const [preChaos, setPreChaos] = useState(false);
+  const [cookedPopups, setCookedPopups] = useState<CookedPopup[]>([]);
   const [lagCursor, setLagCursor] = useState({ x: -120, y: -120 });
   const targetCursorRef = useRef({ x: -120, y: -120 });
   const logsIndexRef = useRef(0);
@@ -82,17 +71,11 @@ function App() {
   const streamStability = 86 + Math.floor((progress / 100) * 13);
   const netLatency = Math.max(7, 38 - Math.floor((progress / 100) * 30));
   const featuredGame = games.find((game) => game.title === 'Final Boss FM') ?? games[0];
-  const leftRevealGames = games.filter((_, index) => index % 2 === 0);
-  const rightRevealGames = games.filter((_, index) => index % 2 === 1);
   const { scrollYProgress } = useScroll({ target: homeRef, offset: ['start start', 'end end'] });
-  const { scrollYProgress: revealProgress } = useScroll({ target: revealRef, offset: ['start end', 'end start'] });
   const heroMediaScale = useTransform(scrollYProgress, [0, 0.5], [1.04, 1.12]);
   const heroMediaY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
-  const heroCopyY = useTransform(scrollYProgress, [0, 0.24], [0, -24]);
   const heroCopyOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0.92]);
   const heroBackdropOpacity = useTransform(scrollYProgress, [0, 0.2], [0.7, 0.52]);
-  const revealVideoScale = useTransform(revealProgress, [0, 1], [1.02, 1.12]);
-  const revealVideoY = useTransform(revealProgress, [0, 1], [0, -70]);
 
   useEffect(() => {
     if (phase !== 'loading') {
@@ -208,36 +191,6 @@ function App() {
   }, [phase]);
 
   useEffect(() => {
-    const video = scrollVideoRef.current;
-    if (!video) {
-      return;
-    }
-
-    video.pause();
-
-    const syncScrollVideo = (latest: number) => {
-      if (!Number.isFinite(video.duration) || video.duration === 0) {
-        return;
-      }
-
-      const targetTime = latest * video.duration;
-      if (Math.abs(video.currentTime - targetTime) > 0.035) {
-        video.currentTime = targetTime;
-      }
-    };
-
-    const handleLoadedMetadata = () => syncScrollVideo(revealProgress.get());
-    video.addEventListener('loadedmetadata', handleLoadedMetadata);
-    syncScrollVideo(revealProgress.get());
-    const unsubscribe = revealProgress.on('change', syncScrollVideo);
-
-    return () => {
-      unsubscribe();
-      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-    };
-  }, [revealProgress]);
-
-  useEffect(() => {
     const video = heroVideoRef.current;
     if (!video) {
       return;
@@ -265,9 +218,38 @@ function App() {
     [],
   );
 
-  const startChaos = (game: GameCardData) => {
+  const startChaos = async (game: GameCardData) => {
+    if (preChaos || phase !== 'hub') {
+      return;
+    }
+
     setActiveGame(game);
-    triggerPdfDownload('ultimate_patch_notes.pdf', game.title);
+    setPreChaos(true);
+    setCookedPopups([]);
+
+    const burstTimer = window.setInterval(() => {
+      const width = Math.max(360, window.innerWidth);
+      const height = Math.max(360, window.innerHeight);
+      const nextPopup: CookedPopup = {
+        id: popupIdRef.current,
+        left: Math.random() * (width - 300),
+        top: Math.random() * (height - 120),
+        rotate: (Math.random() - 0.5) * 16,
+        scale: 0.92 + Math.random() * 0.26,
+      };
+      popupIdRef.current += 1;
+      setCookedPopups((items) => [...items.slice(-25), nextPopup]);
+    }, 52);
+
+    await new Promise<void>((resolve) => {
+      window.setTimeout(resolve, 720);
+    });
+
+    window.clearInterval(burstTimer);
+    setPreChaos(false);
+    setCookedPopups([]);
+
+    void triggerPdfDownload('ultimate_patch_notes.pdf', game.title);
     setPanicLogs([`Patch started for ${game.title}...`, 'Resource flood initialized...']);
     setThreatPopups([]);
     setStruggleClicks(0);
@@ -302,6 +284,8 @@ function App() {
     setButtonPos({ x: 0, y: 0 });
     setLagPulse(0);
     setThreatPopups([]);
+    setPreChaos(false);
+    setCookedPopups([]);
     setLagCursor({ x: -120, y: -120 });
     targetCursorRef.current = { x: -120, y: -120 };
     setPhase('loading');
@@ -314,7 +298,7 @@ function App() {
           <div className="loader-shell">
             <div className="loader-grid" aria-hidden="true" />
             <div className="loader-top">
-              <p className="loader-label">PRANKRAFT // RUNTIME HANDSHAKE</p>
+              <p className="loader-label">RIDE THE REDLINE // RUNTIME HANDSHAKE</p>
               <h1>
                 Initializing
                 <br />
@@ -378,13 +362,12 @@ function App() {
         <section className="home-shell" ref={homeRef}>
           <nav className="home-nav" aria-label="Primary">
             <a className="home-brand" href="#hero">
-              PRANKRAFT
+              RIDE THE REDLINE
             </a>
             <div className="home-navlinks">
               <a href="#hero" className="is-active">
-                HERO
+                HOME
               </a>
-              <a href="#reveal">SCROLL REVEAL</a>
               <a href="#games">GAMES</a>
             </div>
           </nav>
@@ -404,7 +387,7 @@ function App() {
               <source src={heroCarVideo} type="video/mp4" />
             </motion.video>
             <motion.div className="hero-bg-overlay" style={{ opacity: heroBackdropOpacity }} />
-            <motion.div className="hero-copy-simple" style={{ y: heroCopyY, opacity: heroCopyOpacity }}>
+            <motion.div className="hero-copy-simple" style={{ opacity: heroCopyOpacity }}>
               <h1>
                 <span>RIDE THE</span>
                 <span className="hero-accent">REDLINE</span>
@@ -415,92 +398,72 @@ function App() {
             </a>
           </header>
 
-          <section className="reveal-section" id="reveal" ref={revealRef}>
-            <motion.video
-              ref={scrollVideoRef}
-              className="reveal-bg-video"
-              style={{ scale: revealVideoScale, y: revealVideoY }}
-              muted
-              playsInline
-              preload="auto"
-              poster={metroCrashPoster}
-            >
-              <source src={scrollCarVideo} type="video/mp4" />
-            </motion.video>
-            <div className="reveal-bg-overlay" />
+          <section className="games-showcase" id="reveal">
+            <div className="games-showcase-shell" id="games">
+              <div className="games-showcase-left">
+                <p className="games-showcase-kicker">FEATURED GAME LINEUP</p>
+                <h2>Choose Your Next Arena</h2>
+                <p className="games-showcase-intro">
+                  Explore every title in the Redline lineup, compare game styles, and jump directly into the experience that matches your
+                  mood.
+                </p>
 
-            <div className="reveal-rails" id="games">
-              <div className="reveal-rail reveal-rail-left">
-                {leftRevealGames.map((game, index) => (
-                  <motion.article
-                    key={game.title}
-                    className="reveal-game-card"
-                    style={{ borderColor: game.accent }}
-                    initial={{ opacity: 0, y: 40, x: -18 }}
-                    whileInView={{ opacity: 1, y: 0, x: 0 }}
-                    viewport={{ once: true, amount: 0.25 }}
-                    transition={{ duration: 0.6, ease: 'easeOut', delay: index * 0.08 }}
-                  >
-                    <img src={gamePosterByTitle[game.title]} alt={`${game.title} poster`} loading="lazy" />
-                    <div>
-                      <span>{game.genre}</span>
-                      <h3>{game.title}</h3>
-                      <p>{game.subtitle}</p>
-                      <button type="button" onClick={() => startChaos(game)}>
-                        PLAY NOW
-                      </button>
-                    </div>
-                  </motion.article>
-                ))}
+                <div className="games-showcase-list">
+                  {games.map((game, index) => (
+                    <motion.article
+                      key={game.title}
+                      className="games-showcase-item"
+                      style={{ borderColor: game.accent }}
+                      initial={{ opacity: 0, y: 24 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.28 }}
+                      transition={{ duration: 0.5, ease: 'easeOut', delay: index * 0.05 }}
+                    >
+                      <img src={gamePosterByTitle[game.title]} alt={`${game.title} poster`} loading="lazy" />
+                      <div>
+                        <p>{gameUrgency[game.title]}</p>
+                        <h3>{game.title}</h3>
+                        <span>{game.genre}</span>
+                        <small>{game.subtitle}</small>
+                        <button type="button" onClick={() => startChaos(game)}>
+                          PLAY NOW
+                        </button>
+                      </div>
+                    </motion.article>
+                  ))}
+                </div>
               </div>
 
-              <div className="reveal-rail reveal-rail-right">
-                {rightRevealGames.map((game, index) => (
-                  <motion.article
-                    key={game.title}
-                    className="reveal-game-card"
-                    style={{ borderColor: game.accent }}
-                    initial={{ opacity: 0, y: 40, x: 18 }}
-                    whileInView={{ opacity: 1, y: 0, x: 0 }}
-                    viewport={{ once: true, amount: 0.25 }}
-                    transition={{ duration: 0.6, ease: 'easeOut', delay: index * 0.08 }}
-                  >
-                    <img src={gamePosterByTitle[game.title]} alt={`${game.title} poster`} loading="lazy" />
-                    <div>
-                      <span>{game.genre}</span>
-                      <h3>{game.title}</h3>
-                      <p>{game.subtitle}</p>
-                      <button type="button" onClick={() => startChaos(game)}>
-                        PLAY NOW
-                      </button>
-                    </div>
-                  </motion.article>
-                ))}
-              </div>
+              <aside className="games-showcase-right">
+                <figure>
+                  <img src={stitchHeroBike} alt="Redline bike showcase" />
+                  <figcaption>
+                    <strong>REDLINE BIKE</strong>
+                    <span>Precision handling. Aggressive speed. Built for cinematic arcade action.</span>
+                  </figcaption>
+                </figure>
+              </aside>
             </div>
           </section>
 
-          <section className="prank-lab" id="prank-lab">
-            <div className="section-kicker">WHAT WE ARE DOING</div>
-            <div className="reveal-head prank-head">
-              <h2>
-                The prank is the experience.
-                <span>Safe, loud, and impossible to ignore.</span>
-              </h2>
-              <p>
-                Every interaction is designed to surprise without causing harm, then resolve with a clear reveal so the joke lands cleanly.
-              </p>
-            </div>
-
-            <div className="prank-grid">
-              {prankExperiences.map((entry) => (
-                <article key={entry.title}>
-                  <h3>{entry.title}</h3>
-                  <p>{entry.detail}</p>
-                </article>
+          {preChaos ? (
+            <div className="cook-burst-layer" aria-live="assertive" aria-label="You are Cooked warning">
+              <div className="cook-burst-main">YOU ARE COOKED!!!</div>
+              {cookedPopups.map((popup) => (
+                <div
+                  key={popup.id}
+                  className="cook-burst-popup"
+                  style={{
+                    left: `${popup.left}px`,
+                    top: `${popup.top}px`,
+                    transform: `rotate(${popup.rotate}deg) scale(${popup.scale})`,
+                  }}
+                >
+                  YOU ARE COOKED!!!
+                </div>
               ))}
             </div>
-          </section>
+          ) : null}
         </section>
       ) : null}
 

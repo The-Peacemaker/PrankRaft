@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="RIDE THE REDLINE favicon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07090f" />
+      <stop offset="100%" stop-color="#111621" />
+    </linearGradient>
+    <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#81ecff" />
+      <stop offset="100%" stop-color="#ff7346" />
+    </linearGradient>
+  </defs>
+  <rect x="3" y="3" width="58" height="58" rx="14" fill="url(#bg)" stroke="url(#stroke)" stroke-width="3" />
+  <path d="M12 47 L22 15 L32 47 M16 35 H28" fill="none" stroke="#f7fbff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M36 15 H48 C53 15 55 18 55 22 C55 27 52 29 47 29 H36 M36 29 H48 C53 29 56 32 56 37 C56 43 52 47 45 47 H36" fill="none" stroke="#81ecff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
