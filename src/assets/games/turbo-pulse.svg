@@ -1,0 +1,19 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pulseBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2e1833"/>
+      <stop offset="100%" stop-color="#120b1e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#pulseBg)"/>
+  <g>
+    <rect x="110" y="460" width="36" height="120" fill="#ff8e4f"/>
+    <rect x="170" y="400" width="36" height="180" fill="#ff6a86"/>
+    <rect x="230" y="340" width="36" height="240" fill="#5ef2ff"/>
+    <rect x="290" y="430" width="36" height="150" fill="#8ef37d"/>
+    <rect x="350" y="370" width="36" height="210" fill="#ffd86e"/>
+    <rect x="410" y="450" width="36" height="130" fill="#8a7aff"/>
+  </g>
+  <polyline points="100,290 220,250 340,310 460,180 580,240 700,130 820,220 940,160 1060,260" fill="none" stroke="#ffffff" stroke-width="10"/>
+  <text x="70" y="612" fill="#ffffff" font-size="82" font-family="Verdana" font-weight="700">TURBO PULSE</text>
+</svg>

@@ -1,0 +1,24 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="citySky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1f314f"/>
+      <stop offset="100%" stop-color="#4e7baf"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#citySky)"/>
+  <g fill="#132139">
+    <rect x="110" y="250" width="130" height="350"/>
+    <rect x="280" y="180" width="140" height="420"/>
+    <rect x="470" y="230" width="110" height="370"/>
+    <rect x="620" y="120" width="180" height="480"/>
+    <rect x="840" y="200" width="140" height="400"/>
+  </g>
+  <g fill="#7ec1ff">
+    <rect x="135" y="280" width="20" height="24"/>
+    <rect x="320" y="220" width="20" height="24"/>
+    <rect x="665" y="170" width="24" height="28"/>
+    <rect x="885" y="240" width="20" height="24"/>
+  </g>
+  <path d="M0 500 C220 430, 380 540, 620 470 C820 420, 960 520, 1200 460" stroke="#ffd86e" stroke-width="10" fill="none"/>
+  <text x="70" y="610" fill="#ffffff" font-size="82" font-family="Verdana" font-weight="700">METRO CRASH</text>
+</svg>

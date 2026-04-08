@@ -1,0 +1,29 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#071428"/>
+      <stop offset="100%" stop-color="#1e4e8b"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#36f4ff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#5b90ff" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <g opacity="0.2">
+    <circle cx="100" cy="80" r="3" fill="#fff"/>
+    <circle cx="260" cy="140" r="2" fill="#fff"/>
+    <circle cx="680" cy="110" r="2" fill="#fff"/>
+    <circle cx="1020" cy="170" r="3" fill="#fff"/>
+  </g>
+  <path d="M130 675 C340 440, 720 330, 1030 0" stroke="url(#road)" stroke-width="170" fill="none"/>
+  <path d="M180 675 C390 440, 760 330, 1070 0" stroke="#ffd86e" stroke-width="5" stroke-dasharray="18 22" fill="none" opacity="0.9"/>
+  <g transform="translate(620 390)">
+    <rect x="-130" y="-50" width="260" height="90" rx="20" fill="#1a203d"/>
+    <rect x="-155" y="-35" width="70" height="45" rx="10" fill="#5ef2ff"/>
+    <rect x="85" y="-35" width="70" height="45" rx="10" fill="#5ef2ff"/>
+    <circle cx="-75" cy="56" r="34" fill="#10162b"/>
+    <circle cx="75" cy="56" r="34" fill="#10162b"/>
+  </g>
+  <text x="60" y="600" fill="#ffffff" font-size="84" font-family="Verdana" font-weight="700">NEON DRIFT</text>
+</svg>

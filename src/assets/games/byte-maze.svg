@@ -1,0 +1,18 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mazeBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10321d"/>
+      <stop offset="100%" stop-color="#0b1d18"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#mazeBg)"/>
+  <g stroke="#8ef37d" stroke-width="14" fill="none" stroke-linecap="square">
+    <path d="M120 120 H460 V240 H280 V410 H600 V290 H860 V510 H1040"/>
+    <path d="M140 540 H380 V470 H520 V580 H840 V400 H980 V230 H760"/>
+    <path d="M250 180 V330 H430 V520"/>
+    <path d="M710 120 V280 H900 V350"/>
+  </g>
+  <circle cx="1040" cy="510" r="22" fill="#ffe96a"/>
+  <circle cx="120" cy="120" r="16" fill="#62f7ff"/>
+  <text x="70" y="600" fill="#eaffef" font-size="82" font-family="Verdana" font-weight="700">BYTE MAZE</text>
+</svg>
