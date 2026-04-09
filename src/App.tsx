@@ -72,8 +72,8 @@ function App() {
   const netLatency = Math.max(7, 38 - Math.floor((progress / 100) * 30));
   const featuredGame = games.find((game) => game.title === 'Final Boss FM') ?? games[0];
   const { scrollYProgress } = useScroll({ target: homeRef, offset: ['start start', 'end end'] });
-  const heroMediaScale = useTransform(scrollYProgress, [0, 0.5], [1.04, 1.12]);
-  const heroMediaY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
+  const heroMediaScale = useTransform(scrollYProgress, [0, 0.5], [1.2, 1.3]);
+  const heroMediaY = useTransform(scrollYProgress, [0, 0.5], [16, -34]);
   const heroCopyOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0.92]);
   const heroBackdropOpacity = useTransform(scrollYProgress, [0, 0.2], [0.7, 0.52]);
 
@@ -362,7 +362,11 @@ function App() {
         <section className="home-shell" ref={homeRef}>
           <nav className="home-nav" aria-label="Primary">
             <a className="home-brand" href="#hero">
-              RIDE THE REDLINE
+              <span className="home-brand-mark">RR</span>
+              <span className="home-brand-copy">
+                <strong>RIDE THE REDLINE</strong>
+                <small>CINEMATIC ARCADE NETWORK</small>
+              </span>
             </a>
             <div className="home-navlinks">
               <a href="#hero" className="is-active">
@@ -370,6 +374,9 @@ function App() {
               </a>
               <a href="#games">GAMES</a>
             </div>
+            <a className="home-nav-cta" href="#games">
+              START PLAY
+            </a>
           </nav>
 
           <header className="hero-screen" id="hero">
@@ -388,10 +395,24 @@ function App() {
             </motion.video>
             <motion.div className="hero-bg-overlay" style={{ opacity: heroBackdropOpacity }} />
             <motion.div className="hero-copy-simple" style={{ opacity: heroCopyOpacity }}>
+              <p className="hero-tag">SEASON 07 // CINEMATIC ARCADE</p>
               <h1>
                 <span>RIDE THE</span>
                 <span className="hero-accent">REDLINE</span>
               </h1>
+              <p>
+                Precision handling, high-speed visuals, and a polished competitive flow designed to feel premium on every
+                screen.
+              </p>
+              <div className="hero-actions">
+                <a href="#games">Play Featured</a>
+                <a href="#games">View Games</a>
+              </div>
+              <div className="hero-meta">
+                <span>4K Capture Ready</span>
+                <span>Latency 7ms</span>
+                <span>Global Match Queue</span>
+              </div>
             </motion.div>
             <a className="hero-scroll-link" href="#reveal">
               SCROLL
